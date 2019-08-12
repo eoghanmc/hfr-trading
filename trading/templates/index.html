@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>HFR Trading</h1>
+      <br>
+      <p>The system has the following record counts:</p>
+      <ul>
+        <li><strong>Funds:</strong> {{ num_funds }}</li>
+        <li><strong>Active Funds:</strong> {{ num_active_funds }}</li>
+        <li><strong>Index Funds:</strong> {{ num_unique_index_funds }}</li>
+      </ul>
+{% endblock %}

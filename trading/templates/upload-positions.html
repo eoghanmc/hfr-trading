@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h3>Upload Positions</h3>
+        <br>
+        <br>
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+            {% csrf_token %}
+            {{ form.as_p }}
+            </div>
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </form>
+    </div>
+{% endblock %}

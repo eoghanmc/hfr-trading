@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container">
+        <h3>Name: {{ fund.name }}</h3>
+        <h5>Firm: {{ fund.firm}}</h5>
+        <p><strong>ISIN:</strong>{{ fund.isin }}</p>
+        <p><strong>Index ISIN:</strong> {{ fund.index_isin }}</p>
+        <p><strong>Style:</strong> {{ fund.style }}</p>
+    </div>
+{% endblock %}

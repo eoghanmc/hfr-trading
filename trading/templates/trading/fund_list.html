@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Funds</h1>
+<div class="row">
+    <table class="table table-striped table-bordered" style="width:100%">
+        <tr>
+          <th>ISIN</th>
+          <th>Index ISIN</th>
+          <th>Name</th>
+          <th>Firm</th>
+          <th>Style</th>
+          <th>Status</th>
+        </tr>
+        {% if fund_list %}
+            {% for fund in fund_list %}
+                <tr>
+                    <th><a href="{{ fund.get_absolute_url }}">{{ fund.isin }}</a></th>
+                    <th>{{ fund.index_isin }}</th>
+                    <th>{{ fund.name }}</th>
+                    <th>{{ fund.firm}}</th>
+                    <th>{{ fund.style }}</th>
+                    <th>{{ fund.status }}</th>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <p>There are no funds</p>
+        {% endif %}
+    </table>
+</div>
+{% endblock %}

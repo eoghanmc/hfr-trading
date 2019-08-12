@@ -1,0 +1,77 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        {% block title %}<title>HFR Trading</title>{% endblock %}
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+        <!-- Add additional CSS in static file -->
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    </head>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'index' %}" >HFR TMS</a>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'index' %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'funds' %}">Funds</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'portfolios' %}">Portfolios</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'funds' %}">Calendars</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              Actions
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                              <a class="dropdown-item" href="{% url 'upload-file' %}">Add Fund(s)</a>
+                              <a class="dropdown-item" href="{% url 'upload-positions' %}">Add Position(s)</a>
+                              <a class="dropdown-item" href="#">Add Calendar</a>
+                              <div class="dropdown-divider"></div>
+                              <a class="dropdown-item" href="{% url 'generate-trades' %}">Generate Trades</a>
+                              <a class="dropdown-item" href="#">Export</a>
+                            </div>
+                          </li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item"><p class="navbar-text">{{ user.first_name }}</p></li>
+                            <li class="nav-item ml-1"><p class="navbar-text">|</p></li>
+                            <li>
+                                <a class="nav-link" href="{% url 'logout' %}?next={{request.path}}">Logout</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a class="nav-link" href="{% url 'login' %}?next={{request.path}}">Login</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <br>
+            <br>
+            <br>
+            <br>
+        </div>
+        <div class="container">{% block content %}{% endblock %}</div>
+    </body>
+</html>

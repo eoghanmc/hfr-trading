@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Portfolios</h1>
+<div class="row">
+    <table class="table table-striped table-bordered" style="width:100%">
+        <tr>
+          <th>Account Number</th>
+          <th>Name</th>
+          <th>Guideline: Max % issued owned</th>
+          <th>Guideline: Max % assets owned</th>
+          <th>Guideline: Max % position weight</th>
+        </tr>
+        {% if portfolio_list %}
+            {% for portfolio in portfolio_list %}
+                <tr>
+                    <th><a href="#">{{ portfolio.account_number }}</a></th>
+                    <th>{{ portfolio.name }}</th>
+                    <th>{{ portfolio.guideline_shares_owned }}</th>
+                    <th>{{ portfolio.guideline_assets_owned }}</th>
+                    <th>{{ portfolio.guideline_max_weight }}</th>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <p>There are no portfolios</p>
+        {% endif %}
+    </table>
+</div>
+{% endblock %}
