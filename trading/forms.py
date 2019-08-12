@@ -86,11 +86,26 @@ class UploadDailyPositionForm(forms.Form):
 
         for line_position in reader:
             new_position = dict(line_position)
+
+            # Get corresponding Fund (by ISIN) object
+            fund_link = Fund.objects.get(pk=new_position['ISIN Number'])
+
+            # Get corresponding Portfolio (by Acount Number) object
+            portfolio_link = Portfolio.objects.get(pk=new_position['Fund'])
+
+            # check if position line item is cash
+            if new_position['Fund Asset Class'] == 'CURRENCY':
+                is_cash = True
+            else:
+                is_cash = False
+
             Position.objects.create(
-                account_number=new_position[''],
-                isin=new_position[''],
-                value=new_position[''],
-                shares=new_position[''],
-                price=new_position[''],
-                valuation_date=new_position[''],
-                flag_cash=new_position[''])
+                account_number=portfolio_link,
+                isin=fund_link,
+                value=float(
+                    new_position['Base Market Value'].replace(',', '')),
+                shares=float(
+                    new_position['Shares/Par Value'].replace(",", '')),
+                price=new_position['Base Price Amount'],
+                valuation_date=new_position['Period End Date'],
+                flag_cash=is_cash)

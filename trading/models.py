@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from datetime import time
 from django.core.validators import MaxValueValidator, MinValueValidator
 import datetime
+from django.db.models import Sum
 
 
 STATUSES = (
@@ -47,6 +48,11 @@ class Portfolio(models.Model):
     def get_absolute_url(self):
         """Returns the url to access a particular instance of Fund."""
         return reverse_lazy('portfolio-detail', args=[str(self.pk)])
+
+    def get_position_sum(self):
+        sum = "%.2f" % list(
+            self.position_set.aggregate(Sum('value')).values())[0]
+        return sum
 
     def __str__(self):
         return self.account_number
@@ -125,7 +131,7 @@ class Position(models.Model):
 
     # Methods
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class TradeItem(models.Model):

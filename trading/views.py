@@ -1,10 +1,13 @@
 from django.shortcuts import render
 from django.views import generic
-from trading.models import Fund, Portfolio
+from trading.models import Fund, Portfolio, Position
 from .forms import UploadFileForm, GenerateTradesForm, UploadDailyPositionForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+import plotly.offline as opy
+import plotly.graph_objs as go
 
 
 # Create index/homepage view (functions-based)
@@ -21,11 +24,21 @@ def index(request):
     num_index_isin_unique = Fund.objects.all().values('index_isin')\
         .distinct().count()
 
+    # graph example
+    portfolios = Portfolio.objects.all()
+    labels = [x['name'] for x in portfolios.values()]
+    values = [x.get_position_sum() for x in portfolios]
+
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values)])
+    div = opy.plot(fig, auto_open=False, output_type='div', config={
+        'displayModeBar': False})
+
     # Generate context (aka output data)
     context = {
         "num_funds": num_funds,
         "num_active_funds": num_active_funds,
         "num_unique_index_funds": num_index_isin_unique,
+        "graph": div
     }
 
     # Render request with context data
@@ -38,13 +51,21 @@ class FundView(LoginRequiredMixin, generic.ListView):
     login_url = 'login'
     redirect_field_name = 'redirect_to'
 
+
 # Create Portfolio List page (class-based)
-
-
 class PortfoliosView(LoginRequiredMixin, generic.ListView):
     model = Portfolio
     login_url = 'login'
     redirect_field_name = 'redirect_to'
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+
+        # Add in a QuerySet of all the portfolio sum
+        context['portfolios_sum'] = "%.2f" % list(
+            Position.objects.aggregate(Sum('value')).values())[0]
+        return context
 
 
 # Create Fund Detail page (class-based)
@@ -69,7 +90,7 @@ class FundUploaderView(LoginRequiredMixin, generic.FormView):
 class PositionUploaderView(LoginRequiredMixin, generic.FormView):
     template_name = 'upload-positions.html'
     form_class = UploadDailyPositionForm
-    success_url = reverse_lazy('')
+    success_url = reverse_lazy('index')
     login_url = 'login'
     redirect_field_name = 'redirect_to'
 

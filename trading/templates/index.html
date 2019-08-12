@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>HFR Trading</h1>
       <br>
       <p>The system has the following record counts:</p>
       <ul>
@@ -9,4 +8,21 @@
         <li><strong>Active Funds:</strong> {{ num_active_funds }}</li>
         <li><strong>Index Funds:</strong> {{ num_unique_index_funds }}</li>
       </ul>
+      <div class="row">
+         <br>
+      </div>
+      {% if graph %}
+        <div class="row">
+            <div class="col-sm-6">
+                <div class='card'>
+                    <div class="card-header">
+                        <strong>% of Assets</strong>
+                    </div>
+                    <div class="card-body">
+                        {{ graph|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
