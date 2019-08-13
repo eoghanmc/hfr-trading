@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views import generic
-from trading.models import Fund, Portfolio, Position
+from trading.models import Fund, Portfolio, Position, Calendar
 from .forms import UploadFileForm, GenerateTradesForm, UploadDailyPositionForm
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -66,6 +66,15 @@ class PortfoliosView(LoginRequiredMixin, generic.ListView):
         context['portfolios_sum'] = "%.2f" % list(
             Position.objects.aggregate(Sum('value')).values())[0]
         return context
+
+
+class CalendarView(LoginRequiredMixin, generic.ListView):
+    """
+    Create Calendar list page
+    """
+    model = Calendar
+    login_url = 'login'
+    redirect_field_name = 'redirect_to'
 
 
 # Create Fund Detail page (class-based)

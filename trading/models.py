@@ -174,3 +174,26 @@ class BBGData(models.Model):
     # Methods
     def __str__(self):
         return self.id
+
+
+class Calendar(models.Model):
+
+    # Fields
+    code = models.CharField(max_length=10, blank=False)
+    name = models.CharField(max_length=200, blank=False)
+
+    # Methods
+    def __str__(self):
+        return self.code
+
+
+class CalendarDate(models.Model):
+
+    # Fields
+    id = models.AutoField(primary_key=True, editable=False)
+    code = models.ForeignKey('Calendar', on_delete=models.SET_NULL, null=True)
+    date = models.DateField()
+
+    # Methods
+    def __str__(self):
+        return self.code.code + " " + str(self.date)

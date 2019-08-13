@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row ml-1">
+    {% if calendar_list %}
+        <ul>
+        {% for cal in calendar_list %}
+            <li>{{ cal.name }} ( {{ cal.code }})</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+    <span>There are no portfolios</span>
+    {% endif %}
+</div>
+{% endblock %}
