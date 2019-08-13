@@ -111,3 +111,10 @@ class PositionUploaderView(LoginRequiredMixin, generic.FormView):
 class GenerateTradesView(LoginRequiredMixin, generic.FormView):
     template_name = 'generate-trades-form.html'
     form_class = GenerateTradesForm
+    success_url = reverse_lazy('index')
+    login_url = 'login'
+    redirect_field_name = 'redirect_to'
+
+    def form_valid(self, form):
+        form.process_data()
+        return super().form_valid(form)

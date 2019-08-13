@@ -1,5 +1,6 @@
 import io
 import csv
+import sys
 from django import forms
 from .models import Fund, Portfolio, Position
 
@@ -20,6 +21,11 @@ class GenerateTradesForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['account'].queryset = Portfolio.objects.all()
+
+    def process_data(self):
+        acct = self.cleaned_data['account']
+
+        # Generate Trades here
 
 
 class UploadFileForm(forms.Form):
