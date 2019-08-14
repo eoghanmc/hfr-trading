@@ -12,4 +12,5 @@ urlpatterns = [
     path('upload-positions/', views.PositionUploaderView.as_view(),
          name='upload-positions'),
     path('calendars/', views.CalendarView.as_view(), name='calendars'),
+    path('generated-trades/', views.generated_trades, name="generated_trades"),
 ]

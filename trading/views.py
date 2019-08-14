@@ -111,10 +111,22 @@ class PositionUploaderView(LoginRequiredMixin, generic.FormView):
 class GenerateTradesView(LoginRequiredMixin, generic.FormView):
     template_name = 'generate-trades-form.html'
     form_class = GenerateTradesForm
-    success_url = reverse_lazy('index')
+    success_url = reverse_lazy('generated_trades')
     login_url = 'login'
     redirect_field_name = 'redirect_to'
 
     def form_valid(self, form):
-        form.process_data()
+        generated_trades = form.process_data()
+        self.request.session['trades'] = generated_trades
         return super().form_valid(form)
+
+
+@login_required(login_url='login')
+def generated_trades(request):
+
+    context = {
+        "trades": request.session['trades']
+    }
+
+    # Render request with context data
+    return render(request, 'generated_trades.html', context)

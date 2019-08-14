@@ -1,8 +1,10 @@
 import io
 import csv
-import sys
+import trading
+
 from django import forms
 from .models import Fund, Portfolio, Position
+from django.core.validators import ValidationError
 
 
 class GenerateTradesForm(forms.Form):
@@ -15,17 +17,69 @@ class GenerateTradesForm(forms.Form):
     trade_type = forms.ChoiceField(
         widget=forms.RadioSelect,
         choices=(
-            ('Cash', 'Cash'), ('Rebalance', 'Rebalance'), ('Both', 'Both'))
-    )
+            ('Cash', 'Cash'), ('Rebalance', 'Rebalance'), ('Both', 'Both')))
+    target_weights_file = forms.FileField()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['account'].queryset = Portfolio.objects.all()
 
-    def process_data(self):
+    def clean_net_flows(self):
+        data = self.cleaned_data['net_flows']
         acct = self.cleaned_data['account']
+        portfolio_sum = float(Portfolio.objects.get(account_number=acct)
+                              .get_position_sum())
 
-        # Generate Trades here
+        # Check if net flows is redemption (i.e. < 0) AND
+        # if larger than portfolio sum (cannot redeem more funds than total)
+        if (data < 0) and (abs(data) > portfolio_sum):
+            raise ValidationError(
+                'Redemption amount is greater than the portfolio total')
+
+        # Remember to always return the cleaned data.
+        return data
+
+    def read_target_weights(self):
+        f = io.TextIOWrapper(self.check_file_csv().file)
+        reader = csv.DictReader(f)
+
+        data = []
+        for line_position in reader:
+            target_position = dict(line_position)
+            data = data.append({
+                "index_isin": target_position['ISIN'],
+                "target_weight": target_position['Weight']})
+
+        return data
+
+    def check_file_csv(self):
+        f = self.cleaned_data['file']
+        if f:
+            ext = f.name.split('.')[-1]
+            if ext != 'csv':
+                raise forms.ValidationError('File type not supported')
+        return f
+
+    def process_data(self):
+        portfolio = self.cleaned_data['account']
+        trade_type = self.cleaned_data['trade_type']
+        trade_amount = self.cleaned_data['net_flows']
+        trade_date = self.cleaned_data['trade_date']
+        rebalance_weights = self.read_target_weights()
+
+        # Get fund info - get all funds that have Index ISINd that match
+        # what is in the rbalance_weights data
+
+        # Get the current portfolio from what is already stored in Position set
+        positions = portfolio.position_set.all()
+
+        # Generate Trades here - returned as dict()
+        sim_trades = trading.calculate_trades(
+            portfolio, positions, rebalance_weights,
+            trade_type, trade_amount, trade_date)
+
+        # Return trading data
+        return sim_trades
 
 
 class UploadFileForm(forms.Form):
